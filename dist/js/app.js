@@ -54976,6 +54976,7 @@ var AppController = function () {
 
       this.todoService.addItem(this.user.id, todoItem).then(function () {
 
+        _this3.todoList.clear();
         _this3.updateTodoList();
       });
     }

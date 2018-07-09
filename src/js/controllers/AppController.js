@@ -71,6 +71,7 @@ class AppController {
       .addItem(this.user.id, todoItem)
       .then(() => {
         
+        this.todoList.clear();
         this.updateTodoList();
       })
   }
