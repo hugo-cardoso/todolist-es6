@@ -4,7 +4,7 @@ class TodoView {
 
     constructor( selector ) {
 
-        this._elem = $(selector);
+        this._elem = $('#todoList');
     }
 
     update( model ) {
@@ -14,9 +14,9 @@ class TodoView {
 
     template( model ) {
 
-        return  `
+        return  !model ? `` : `
                     <form class="todo-list__form">
-                        <input type="text" class="todo-list__form-input" />
+                        <input type="text" class="todo-list__form-input" placeholder="Crie uma nota..."/>
                         <button type="submit" class="todo-list__form-add">+</button>
                     </form>
                     <ul class="todo-list">

@@ -1,114 +1,41 @@
-[debug] [2018-07-07T18:56:11.750Z] ----------------------------------------------------------------------
-[debug] [2018-07-07T18:56:11.752Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\FAMILIA CARDOSO\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
-[debug] [2018-07-07T18:56:11.752Z] CLI Version:   3.19.3
-[debug] [2018-07-07T18:56:11.752Z] Platform:      win32
-[debug] [2018-07-07T18:56:11.752Z] Node Version:  v8.9.4
-[debug] [2018-07-07T18:56:11.753Z] Time:          Sat Jul 07 2018 15:56:11 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-07T18:56:11.753Z] ----------------------------------------------------------------------
+[debug] [2018-07-19T22:35:50.069Z] ----------------------------------------------------------------------
+[debug] [2018-07-19T22:35:50.069Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Familia Cardoso\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-07-19T22:35:50.069Z] CLI Version:   3.19.3
+[debug] [2018-07-19T22:35:50.069Z] Platform:      win32
+[debug] [2018-07-19T22:35:50.069Z] Node Version:  v8.11.3
+[debug] [2018-07-19T22:35:50.069Z] Time:          Thu Jul 19 2018 19:35:50 GMT-0300 (Hora oficial do Brasil)
+[debug] [2018-07-19T22:35:50.069Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2018-07-07T18:56:11.761Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-07-07T18:56:11.761Z] > authorizing via signed-in user
-[debug] [2018-07-07T18:56:11.763Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/todo-b85ab  
-  
- Sat Jul 07 2018 15:56:11 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-07T18:56:12.708Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-07T18:56:12.710Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/todo-b85ab/tokens  
-  
- Sat Jul 07 2018 15:56:12 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-07T18:56:13.601Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-07T18:56:13.603Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/todo-b85ab  
-  
- Sat Jul 07 2018 15:56:13 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-07T18:56:14.653Z] <<< HTTP RESPONSE 200
-[info] 
-[info] === Serving from 'C:\Users\FAMILIA CARDOSO\Documents\Projetos\es6-todo'...
-[info] 
-[debug] [2018-07-07T18:56:14.660Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/93479253967/clients/_:getWebAppConfig  
-  
- Sat Jul 07 2018 15:56:14 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-07T18:56:15.402Z] <<< HTTP RESPONSE 200
-[info] i  hosting: Serving hosting files from: ./
-[info] +  hosting: Local server: http://localhost:5000
-
-[debug] [2018-07-09T05:36:48.852Z] ----------------------------------------------------------------------
-[debug] [2018-07-09T05:36:48.854Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\FAMILIA CARDOSO\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
-[debug] [2018-07-09T05:36:48.854Z] CLI Version:   3.19.3
-[debug] [2018-07-09T05:36:48.854Z] Platform:      win32
-[debug] [2018-07-09T05:36:48.854Z] Node Version:  v8.9.4
-[debug] [2018-07-09T05:36:48.854Z] Time:          Mon Jul 09 2018 02:36:48 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T05:36:48.854Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2018-07-09T05:36:48.866Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-07-09T05:36:48.866Z] > authorizing via signed-in user
-[debug] [2018-07-09T05:36:48.867Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2018-07-09T05:36:48.868Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
- { refresh_token: '1/BNoCqJHhQhH9B31UcEYh0klN1oalMQlXg04olATj6UY',
+[debug] [2018-07-19T22:35:50.085Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-07-19T22:35:50.085Z] > authorizing via signed-in user
+[debug] [2018-07-19T22:35:50.085Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-07-19T22:35:50.085Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/L17AUXGkQ0xc2LQYdYAYYYSVKlhlHCAJoNdC-UCpt5w',
   client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
   client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
   grant_type: 'refresh_token',
   scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
- Mon Jul 09 2018 02:36:48 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T05:36:49.270Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-09T05:36:49.475Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/todo-b85ab  
+ Thu Jul 19 2018 19:35:50 GMT-0300 (Hora oficial do Brasil)
+[debug] [2018-07-19T22:35:50.471Z] <<< HTTP RESPONSE 200
+[debug] [2018-07-19T22:35:50.487Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/todo-b85ab  
   
- Mon Jul 09 2018 02:36:49 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T05:36:50.643Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-09T05:36:50.643Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/todo-b85ab/tokens  
+ Thu Jul 19 2018 19:35:50 GMT-0300 (Hora oficial do Brasil)
+[debug] [2018-07-19T22:35:51.392Z] <<< HTTP RESPONSE 200
+[debug] [2018-07-19T22:35:51.394Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/todo-b85ab/tokens  
   
- Mon Jul 09 2018 02:36:50 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T05:36:51.385Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-09T05:36:51.388Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/todo-b85ab  
+ Thu Jul 19 2018 19:35:51 GMT-0300 (Hora oficial do Brasil)
+[debug] [2018-07-19T22:35:52.097Z] <<< HTTP RESPONSE 200
+[debug] [2018-07-19T22:35:52.097Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/todo-b85ab  
   
- Mon Jul 09 2018 02:36:51 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T05:36:52.555Z] <<< HTTP RESPONSE 200
+ Thu Jul 19 2018 19:35:52 GMT-0300 (Hora oficial do Brasil)
+[debug] [2018-07-19T22:35:53.280Z] <<< HTTP RESPONSE 200
 [info] 
-[info] === Serving from 'C:\Users\FAMILIA CARDOSO\Documents\Projetos\es6-todo'...
+[info] === Serving from 'E:\Projetos\todolist-es6'...
 [info] 
-[debug] [2018-07-09T05:36:52.560Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/93479253967/clients/_:getWebAppConfig  
+[debug] [2018-07-19T22:35:53.289Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/93479253967/clients/_:getWebAppConfig  
   
- Mon Jul 09 2018 02:36:52 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T05:36:53.142Z] <<< HTTP RESPONSE 200
-[info] i  hosting: Serving hosting files from: ./
-[info] +  hosting: Local server: http://localhost:5000
-
-[debug] [2018-07-09T16:35:55.517Z] ----------------------------------------------------------------------
-[debug] [2018-07-09T16:35:55.520Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\FAMILIA CARDOSO\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
-[debug] [2018-07-09T16:35:55.520Z] CLI Version:   3.19.3
-[debug] [2018-07-09T16:35:55.520Z] Platform:      win32
-[debug] [2018-07-09T16:35:55.520Z] Node Version:  v8.9.4
-[debug] [2018-07-09T16:35:55.520Z] Time:          Mon Jul 09 2018 13:35:55 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T16:35:55.520Z] ----------------------------------------------------------------------
-[debug] 
-[debug] [2018-07-09T16:35:55.536Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-07-09T16:35:55.536Z] > authorizing via signed-in user
-[debug] [2018-07-09T16:35:55.537Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2018-07-09T16:35:55.538Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
- { refresh_token: '1/BNoCqJHhQhH9B31UcEYh0klN1oalMQlXg04olATj6UY',
-  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
-  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
-  grant_type: 'refresh_token',
-  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
- Mon Jul 09 2018 13:35:55 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T16:35:55.931Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-09T16:35:55.953Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/todo-b85ab  
-  
- Mon Jul 09 2018 13:35:55 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T16:35:56.889Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-09T16:35:56.891Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/todo-b85ab/tokens  
-  
- Mon Jul 09 2018 13:35:56 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T16:35:57.580Z] <<< HTTP RESPONSE 200
-[debug] [2018-07-09T16:35:57.582Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/todo-b85ab  
-  
- Mon Jul 09 2018 13:35:57 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T16:35:58.745Z] <<< HTTP RESPONSE 200
-[info] 
-[info] === Serving from 'C:\Users\FAMILIA CARDOSO\Documents\Projetos\es6-todo'...
-[info] 
-[debug] [2018-07-09T16:35:58.752Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/93479253967/clients/_:getWebAppConfig  
-  
- Mon Jul 09 2018 13:35:58 GMT-0300 (Hora oficial do Brasil)
-[debug] [2018-07-09T16:35:59.594Z] <<< HTTP RESPONSE 200
+ Thu Jul 19 2018 19:35:53 GMT-0300 (Hora oficial do Brasil)
+[debug] [2018-07-19T22:35:54.117Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: ./
 [info] +  hosting: Local server: http://localhost:5000
 

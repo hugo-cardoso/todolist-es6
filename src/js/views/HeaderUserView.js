@@ -1,13 +1,15 @@
+import $ from 'jquery';
+
 class HeaderUserView {
 
     constructor( selector ) {
 
-        this._elem = document.querySelector(selector);
+        this._elem = $('#headerUser');
     }
 
-    update( model ) {
+    update( model = null ) {
 
-        this._elem.innerHTML = this.template( model );
+        this._elem.html( this.template( model ) );
     }
 
     template( model ) {

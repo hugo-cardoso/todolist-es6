@@ -16064,7 +16064,7 @@ exports.DataSnapshot = DataSnapshot;
 exports.OnDisconnect = OnDisconnect;
 
 }).call(this,require('_process'))
-},{"@firebase/app":1,"@firebase/logger":6,"@firebase/util":10,"_process":15,"tslib":17}],4:[function(require,module,exports){
+},{"@firebase/app":1,"@firebase/logger":6,"@firebase/util":10,"_process":15,"tslib":18}],4:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -33577,7 +33577,7 @@ registerFirestore(firebase);
 exports.registerFirestore = registerFirestore;
 
 }).call(this,require('_process'))
-},{"@firebase/app":1,"@firebase/logger":6,"@firebase/webchannel-wrapper":11,"_process":15,"tslib":17}],5:[function(require,module,exports){
+},{"@firebase/app":1,"@firebase/logger":6,"@firebase/webchannel-wrapper":11,"_process":15,"tslib":18}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -34129,7 +34129,7 @@ registerFunctions(firebase);
 
 exports.registerFunctions = registerFunctions;
 
-},{"@firebase/app":1,"tslib":17}],6:[function(require,module,exports){
+},{"@firebase/app":1,"tslib":18}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -36444,7 +36444,7 @@ function isSWControllerSupported() {
 exports.registerMessaging = registerMessaging;
 exports.isSupported = isSupported;
 
-},{"@firebase/app":1,"@firebase/util":10,"tslib":17}],8:[function(require,module,exports){
+},{"@firebase/app":1,"@firebase/util":10,"tslib":18}],8:[function(require,module,exports){
 (function (global,setImmediate){
 'use strict';
 
@@ -37979,7 +37979,7 @@ var iterator = _wksExt.f('iterator');
  */
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"timers":16,"whatwg-fetch":18}],9:[function(require,module,exports){
+},{"timers":17,"whatwg-fetch":19}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -43222,7 +43222,7 @@ exports.validateNamespace = validateNamespace;
 exports.stringLength = stringLength;
 exports.stringToByteArray = stringToByteArray$1;
 
-},{"tslib":17}],11:[function(require,module,exports){
+},{"tslib":18}],11:[function(require,module,exports){
 (function (global){
 (function() {var g,goog=goog||{},k=this;function l(a){return"string"==typeof a}function n(a,b){a=a.split(".");b=b||k;for(var c=0;c<a.length;c++)if(b=b[a[c]],null==b)return null;return b}function aa(){}
 function ba(a){var b=typeof a;if("object"==b)if(a){if(a instanceof Array)return"array";if(a instanceof Object)return b;var c=Object.prototype.toString.call(a);if("[object Window]"==c)return"object";if("[object Array]"==c||"number"==typeof a.length&&"undefined"!=typeof a.splice&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("splice"))return"array";if("[object Function]"==c||"undefined"!=typeof a.call&&"undefined"!=typeof a.propertyIsEnumerable&&!a.propertyIsEnumerable("call"))return"function"}else return"null";
@@ -54032,6 +54032,284 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],16:[function(require,module,exports){
+/*
+Copyright (c) 2010,2011,2012,2013,2014 Morgan Roderick http://roderick.dk
+License: MIT - http://mrgnrdrck.mit-license.org
+
+https://github.com/mroderick/PubSubJS
+*/
+(function (root, factory){
+    'use strict';
+
+    var PubSub = {};
+    root.PubSub = PubSub;
+
+    var define = root.define;
+
+    factory(PubSub);
+
+    // AMD support
+    if (typeof define === 'function' && define.amd){
+        define(function() { return PubSub; });
+
+        // CommonJS and Node.js module support
+    } else if (typeof exports === 'object'){
+        if (module !== undefined && module.exports) {
+            exports = module.exports = PubSub; // Node.js specific `module.exports`
+        }
+        exports.PubSub = PubSub; // CommonJS module 1.1.1 spec
+        module.exports = exports = PubSub; // CommonJS
+    }
+
+}(( typeof window === 'object' && window ) || this, function (PubSub){
+    'use strict';
+
+    var messages = {},
+        lastUid = -1;
+
+    function hasKeys(obj){
+        var key;
+
+        for (key in obj){
+            if ( obj.hasOwnProperty(key) ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+	 *	Returns a function that throws the passed exception, for use as argument for setTimeout
+	 *	@param { Object } ex An Error object
+	 */
+    function throwException( ex ){
+        return function reThrowException(){
+            throw ex;
+        };
+    }
+
+    function callSubscriberWithDelayedExceptions( subscriber, message, data ){
+        try {
+            subscriber( message, data );
+        } catch( ex ){
+            setTimeout( throwException( ex ), 0);
+        }
+    }
+
+    function callSubscriberWithImmediateExceptions( subscriber, message, data ){
+        subscriber( message, data );
+    }
+
+    function deliverMessage( originalMessage, matchedMessage, data, immediateExceptions ){
+        var subscribers = messages[matchedMessage],
+            callSubscriber = immediateExceptions ? callSubscriberWithImmediateExceptions : callSubscriberWithDelayedExceptions,
+            s;
+
+        if ( !messages.hasOwnProperty( matchedMessage ) ) {
+            return;
+        }
+
+        for (s in subscribers){
+            if ( subscribers.hasOwnProperty(s)){
+                callSubscriber( subscribers[s], originalMessage, data );
+            }
+        }
+    }
+
+    function createDeliveryFunction( message, data, immediateExceptions ){
+        return function deliverNamespaced(){
+            var topic = String( message ),
+                position = topic.lastIndexOf( '.' );
+
+            // deliver the message as it is now
+            deliverMessage(message, message, data, immediateExceptions);
+
+            // trim the hierarchy and deliver message to each level
+            while( position !== -1 ){
+                topic = topic.substr( 0, position );
+                position = topic.lastIndexOf('.');
+                deliverMessage( message, topic, data, immediateExceptions );
+            }
+        };
+    }
+
+    function messageHasSubscribers( message ){
+        var topic = String( message ),
+            found = Boolean(messages.hasOwnProperty( topic ) && hasKeys(messages[topic])),
+            position = topic.lastIndexOf( '.' );
+
+        while ( !found && position !== -1 ){
+            topic = topic.substr( 0, position );
+            position = topic.lastIndexOf( '.' );
+            found = Boolean(messages.hasOwnProperty( topic ) && hasKeys(messages[topic]));
+        }
+
+        return found;
+    }
+
+    function publish( message, data, sync, immediateExceptions ){
+        var deliver = createDeliveryFunction( message, data, immediateExceptions ),
+            hasSubscribers = messageHasSubscribers( message );
+
+        if ( !hasSubscribers ){
+            return false;
+        }
+
+        if ( sync === true ){
+            deliver();
+        } else {
+            setTimeout( deliver, 0 );
+        }
+        return true;
+    }
+
+    /**
+	 *	PubSub.publish( message[, data] ) -> Boolean
+	 *	- message (String): The message to publish
+	 *	- data: The data to pass to subscribers
+	 *	Publishes the the message, passing the data to it's subscribers
+	**/
+    PubSub.publish = function( message, data ){
+        return publish( message, data, false, PubSub.immediateExceptions );
+    };
+
+    /**
+	 *	PubSub.publishSync( message[, data] ) -> Boolean
+	 *	- message (String): The message to publish
+	 *	- data: The data to pass to subscribers
+	 *	Publishes the the message synchronously, passing the data to it's subscribers
+	**/
+    PubSub.publishSync = function( message, data ){
+        return publish( message, data, true, PubSub.immediateExceptions );
+    };
+
+    /**
+	 *	PubSub.subscribe( message, func ) -> String
+	 *	- message (String): The message to subscribe to
+	 *	- func (Function): The function to call when a new message is published
+	 *	Subscribes the passed function to the passed message. Every returned token is unique and should be stored if
+	 *	you need to unsubscribe
+	**/
+    PubSub.subscribe = function( message, func ){
+        if ( typeof func !== 'function'){
+            return false;
+        }
+
+        // message is not registered yet
+        if ( !messages.hasOwnProperty( message ) ){
+            messages[message] = {};
+        }
+
+        // forcing token as String, to allow for future expansions without breaking usage
+        // and allow for easy use as key names for the 'messages' object
+        var token = 'uid_' + String(++lastUid);
+        messages[message][token] = func;
+
+        // return token for unsubscribing
+        return token;
+    };
+
+    /**
+	 *	PubSub.subscribeOnce( message, func ) -> PubSub
+	 *	- message (String): The message to subscribe to
+	 *	- func (Function): The function to call when a new message is published
+	 *	Subscribes the passed function to the passed message once
+	**/
+    PubSub.subscribeOnce = function( message, func ){
+        var token = PubSub.subscribe( message, function(){
+            // before func apply, unsubscribe message
+            PubSub.unsubscribe( token );
+            func.apply( this, arguments );
+        });
+        return PubSub;
+    };
+
+    /* Public: Clears all subscriptions
+	 */
+    PubSub.clearAllSubscriptions = function clearAllSubscriptions(){
+        messages = {};
+    };
+
+    /*Public: Clear subscriptions by the topic
+	*/
+    PubSub.clearSubscriptions = function clearSubscriptions(topic){
+        var m;
+        for (m in messages){
+            if (messages.hasOwnProperty(m) && m.indexOf(topic) === 0){
+                delete messages[m];
+            }
+        }
+    };
+
+    /* Public: removes subscriptions.
+	 * When passed a token, removes a specific subscription.
+	 * When passed a function, removes all subscriptions for that function
+	 * When passed a topic, removes all subscriptions for that topic (hierarchy)
+	 *
+	 * value - A token, function or topic to unsubscribe.
+	 *
+	 * Examples
+	 *
+	 *		// Example 1 - unsubscribing with a token
+	 *		var token = PubSub.subscribe('mytopic', myFunc);
+	 *		PubSub.unsubscribe(token);
+	 *
+	 *		// Example 2 - unsubscribing with a function
+	 *		PubSub.unsubscribe(myFunc);
+	 *
+	 *		// Example 3 - unsubscribing a topic
+	 *		PubSub.unsubscribe('mytopic');
+	 */
+    PubSub.unsubscribe = function(value){
+        var descendantTopicExists = function(topic) {
+                var m;
+                for ( m in messages ){
+                    if ( messages.hasOwnProperty(m) && m.indexOf(topic) === 0 ){
+                        // a descendant of the topic exists:
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            isTopic    = typeof value === 'string' && ( messages.hasOwnProperty(value) || descendantTopicExists(value) ),
+            isToken    = !isTopic && typeof value === 'string',
+            isFunction = typeof value === 'function',
+            result = false,
+            m, message, t;
+
+        if (isTopic){
+            PubSub.clearSubscriptions(value);
+            return;
+        }
+
+        for ( m in messages ){
+            if ( messages.hasOwnProperty( m ) ){
+                message = messages[m];
+
+                if ( isToken && message[value] ){
+                    delete message[value];
+                    result = value;
+                    // tokens are unique, so we can just stop here
+                    break;
+                }
+
+                if (isFunction) {
+                    for ( t in message ){
+                        if (message.hasOwnProperty(t) && message[t] === value){
+                            delete message[t];
+                            result = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    };
+}));
+
+},{}],17:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -54110,7 +54388,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":15,"timers":16}],17:[function(require,module,exports){
+},{"process/browser.js":15,"timers":17}],18:[function(require,module,exports){
 (function (global){
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54355,7 +54633,7 @@ var __importDefault;
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 (function(self) {
   'use strict';
 
@@ -54823,7 +55101,7 @@ var __importDefault;
   self.fetch.polyfill = true
 })(typeof self !== 'undefined' ? self : this);
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -54842,7 +55120,7 @@ var APP_SETTINGS = {
 
 exports.default = APP_SETTINGS;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 var _AppController = require('./controllers/AppController');
@@ -54853,11 +55131,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var app = new _AppController2.default();
 
-},{"./controllers/AppController":21}],21:[function(require,module,exports){
+},{"./controllers/AppController":22}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -54870,6 +55148,10 @@ var _jquery = require('jquery');
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _pubsubJs = require('pubsub-js');
+
+var _pubsubJs2 = _interopRequireDefault(_pubsubJs);
+
 var _APP_SETTINGS = require('../APP_SETTINGS.js');
 
 var _APP_SETTINGS2 = _interopRequireDefault(_APP_SETTINGS);
@@ -54878,21 +55160,13 @@ var _TodoService = require('../services/TodoService');
 
 var _TodoService2 = _interopRequireDefault(_TodoService);
 
-var _TodoList = require('../models/TodoList');
+var _TodoController = require('./TodoController');
 
-var _TodoList2 = _interopRequireDefault(_TodoList);
-
-var _TodoItem = require('../models/TodoItem');
-
-var _TodoItem2 = _interopRequireDefault(_TodoItem);
+var _TodoController2 = _interopRequireDefault(_TodoController);
 
 var _AuthController = require('./AuthController');
 
 var _AuthController2 = _interopRequireDefault(_AuthController);
-
-var _User = require('../models/User');
-
-var _User2 = _interopRequireDefault(_User);
 
 var _HeaderUserView = require('../views/HeaderUserView');
 
@@ -54909,164 +55183,57 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var AppController = function () {
-  function AppController() {
-    _classCallCheck(this, AppController);
+    function AppController() {
+        _classCallCheck(this, AppController);
 
-    firebase.initializeApp(_APP_SETTINGS2.default.firebase_configs);
-    this.todoService = new _TodoService2.default();
+        firebase.initializeApp(_APP_SETTINGS2.default.firebase_configs);
 
-    this.authController = new _AuthController2.default();
+        this.user = null;
 
-    this.todoList = new _TodoList2.default();
-    this.user = null;
+        this.todoService = new _TodoService2.default();
 
-    this.headerUserView = new _HeaderUserView2.default('#headerUser');
-    this.todoView = new _TodoView2.default('#todoList');
+        this.authController = new _AuthController2.default();
+        this.todoController = new _TodoController2.default();
 
-    this.init();
-  }
-
-  _createClass(AppController, [{
-    key: 'init',
-    value: function init() {
-      var _this = this;
-
-      this.checkIsLogged();
-
-      (0, _jquery2.default)('body').on('click', '#loginGoogle', function (e) {
-        return _this.login();
-      });
-      (0, _jquery2.default)('body').on('click', '#logoutGoogle', function (e) {
-        return _this.logout();
-      });
-      (0, _jquery2.default)('body').on('click', '.todo-list__item-remove', function (e) {
-
-        var key = (0, _jquery2.default)(e.target).attr('data-key');
-
-        _this.removeItem(key);
-      });
-      (0, _jquery2.default)('body').on('submit', '.todo-list__form', function (e) {
-
-        e.preventDefault();
-        _this.addItem();
-      }).bind(this);
+        this.todoView = new _TodoView2.default();
+        this.headerUserView = new _HeaderUserView2.default();
+        this.init();
     }
-  }, {
-    key: 'removeItem',
-    value: function removeItem(key) {
-      var _this2 = this;
 
-      this.todoService.removeItem(this.user.id, key).then(function (res) {
+    _createClass(AppController, [{
+        key: 'init',
+        value: function init() {
+            var _this = this;
 
-        _this2.todoList.clear();
-        _this2.updateTodoList();
-      });
-    }
-  }, {
-    key: 'addItem',
-    value: function addItem() {
-      var _this3 = this;
+            this.headerUserView.update();
 
-      var text = (0, _jquery2.default)('.todo-list__form-input').val();
+            (0, _jquery2.default)('body').on('click', '#loginGoogle', function (e) {
+                return _this.authController.login();
+            });
+            (0, _jquery2.default)('body').on('click', '#logoutGoogle', function (e) {
+                return _this.authController.logout();
+            });
 
-      var todoItem = new _TodoItem2.default({
-        text: text,
-        date: new Date()
-      });
+            _pubsubJs2.default.subscribe('user', function (_, user) {
 
-      this.todoService.addItem(this.user.id, todoItem).then(function () {
+                _this.user = user;
+                _this.headerUserView.update(user);
+            });
 
-        _this3.todoList.clear();
-        _this3.updateTodoList();
-      });
-    }
-  }, {
-    key: 'checkIsLogged',
-    value: function checkIsLogged() {
-      var _this4 = this;
+            _pubsubJs2.default.subscribe('todolist', function (_, todolist) {
 
-      setTimeout(function () {
-
-        var user = _this4.authController.isLogged();
-
-        if (user) {
-
-          _this4.user = new _User2.default({
-            name: user.displayName,
-            email: user.email,
-            id: user.uid,
-            imageUrl: user.photoURL
-          });
-
-          _this4.updateTodoList();
+                _this.user ? _this.todoView.update(todolist) : _this.todoView.clear();
+            });
         }
+    }]);
 
-        _this4.headerUserView.update(_this4.user);
-      }, 1500);
-    }
-  }, {
-    key: 'login',
-    value: function login() {
-      var _this5 = this;
-
-      this.authController.login().then(function (result) {
-
-        var user = result.user;
-
-        _this5.user = new _User2.default({
-          name: user.displayName,
-          email: user.email,
-          id: user.uid,
-          imageUrl: user.photoURL
-        });
-
-        _this5.updateTodoList();
-        _this5.headerUserView.update(_this5.user);
-      });
-    }
-  }, {
-    key: 'logout',
-    value: function logout() {
-      var _this6 = this;
-
-      if (this.user) {
-
-        this.authController.logout().then(function () {
-
-          _this6.user = null;
-          _this6.headerUserView.update(_this6.user);
-          _this6.todoView.clear();
-        });
-      }
-    }
-  }, {
-    key: 'updateTodoList',
-    value: function updateTodoList() {
-      var _this7 = this;
-
-      this.todoService.getList(this.user.id).then(function (res) {
-
-        res.map(function (item) {
-
-          _this7.todoList.add(new _TodoItem2.default({
-            text: item.message,
-            date: item.date,
-            key: item.key
-          }));
-        });
-
-        _this7.todoView.update(_this7.todoList);
-      });
-    }
-  }]);
-
-  return AppController;
+    return AppController;
 }();
 
 exports.default = AppController;
 
-},{"../APP_SETTINGS.js":19,"../models/TodoItem":23,"../models/TodoList":24,"../models/User":25,"../services/TodoService":26,"../views/HeaderUserView":27,"../views/TodoView":28,"./AuthController":22,"firebase":13,"jquery":14}],22:[function(require,module,exports){
-"use strict";
+},{"../APP_SETTINGS.js":20,"../services/TodoService":28,"../views/HeaderUserView":29,"../views/TodoView":30,"./AuthController":23,"./TodoController":24,"firebase":13,"jquery":14,"pubsub-js":16}],23:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -55074,11 +55241,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _firebase = require("firebase");
+var _pubsubJs = require('pubsub-js');
+
+var _pubsubJs2 = _interopRequireDefault(_pubsubJs);
+
+var _HeaderUserView = require('../views/HeaderUserView');
+
+var _HeaderUserView2 = _interopRequireDefault(_HeaderUserView);
+
+var _User = require('../models/User');
+
+var _User2 = _interopRequireDefault(_User);
+
+var _firebase = require('firebase');
 
 var _firebase2 = _interopRequireDefault(_firebase);
 
-require("firebase/auth");
+require('firebase/auth');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -55088,28 +55267,41 @@ var AuthController = function () {
     function AuthController() {
         _classCallCheck(this, AuthController);
 
+        this.user = null;
+        this.headerUserView = new _HeaderUserView2.default();
         this.provider = new _firebase2.default.auth.GoogleAuthProvider();
     }
 
     _createClass(AuthController, [{
-        key: "isLogged",
-        value: function isLogged() {
-
-            var user = _firebase2.default.auth().currentUser;
-
-            return user ? user : false;
-        }
-    }, {
-        key: "login",
+        key: 'login',
         value: function login() {
+            var _this = this;
 
-            return _firebase2.default.auth().signInWithPopup(this.provider);
+            _firebase2.default.auth().signInWithPopup(this.provider).then(function (res) {
+
+                var user = res.user;
+
+                _this.user = new _User2.default({
+                    name: user.displayName,
+                    email: user.email,
+                    id: user.uid,
+                    imageUrl: user.photoURL
+                });
+
+                _pubsubJs2.default.publish('user', _this.user);
+            });
         }
     }, {
-        key: "logout",
+        key: 'logout',
         value: function logout() {
+            var _this2 = this;
 
-            return _firebase2.default.auth().signOut();
+            _firebase2.default.auth().signOut().then(function (res) {
+
+                _this2.user = null;
+
+                _pubsubJs2.default.publish('user', _this2.user);
+            });
         }
     }]);
 
@@ -55118,7 +55310,133 @@ var AuthController = function () {
 
 exports.default = AuthController;
 
-},{"firebase":13,"firebase/auth":12}],23:[function(require,module,exports){
+},{"../models/User":27,"../views/HeaderUserView":29,"firebase":13,"firebase/auth":12,"pubsub-js":16}],24:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _pubsubJs = require('pubsub-js');
+
+var _pubsubJs2 = _interopRequireDefault(_pubsubJs);
+
+var _TodoList = require('../models/TodoList');
+
+var _TodoList2 = _interopRequireDefault(_TodoList);
+
+var _TodoItem = require('../models/TodoItem');
+
+var _TodoItem2 = _interopRequireDefault(_TodoItem);
+
+var _TodoService = require('../services/TodoService');
+
+var _TodoService2 = _interopRequireDefault(_TodoService);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TodoController = function () {
+    function TodoController() {
+        var _this = this;
+
+        _classCallCheck(this, TodoController);
+
+        this.todoService = new _TodoService2.default();
+        this.todoList = new _TodoList2.default();
+        this.user = null;
+
+        _pubsubJs2.default.subscribe('user', function (_, user) {
+
+            _this.user = user;
+
+            if (user) {
+
+                _this.updateList();
+            } else {
+
+                _this.todoList.clear();
+                _pubsubJs2.default.publish('todolist', _this.todoList);
+            }
+        });
+
+        (0, _jquery2.default)('body').on('click', '.todo-list__item-remove', function (e) {
+
+            var key = (0, _jquery2.default)(e.target).attr('data-key');
+
+            _this.removeItem(key);
+        });
+
+        (0, _jquery2.default)('body').on('submit', '.todo-list__form', function (e) {
+
+            e.preventDefault();
+            _this.addItem();
+        }).bind(this);
+    }
+
+    _createClass(TodoController, [{
+        key: 'addItem',
+        value: function addItem() {
+            var _this2 = this;
+
+            var text = (0, _jquery2.default)('.todo-list__form-input').val();
+
+            var todoItem = new _TodoItem2.default({
+                text: text,
+                date: new Date()
+            });
+
+            this.todoService.addItem(this.user.id, todoItem).then(function () {
+
+                _this2.todoList.clear();
+                _this2.updateList();
+            });
+        }
+    }, {
+        key: 'removeItem',
+        value: function removeItem(key) {
+            var _this3 = this;
+
+            this.todoService.removeItem(this.user.id, key).then(function (res) {
+
+                _this3.todoList.clear();
+                _this3.updateList();
+            });
+        }
+    }, {
+        key: 'updateList',
+        value: function updateList() {
+            var _this4 = this;
+
+            this.todoService.getList(this.user.id).then(function (res) {
+
+                res.map(function (item) {
+
+                    _this4.todoList.add(new _TodoItem2.default({
+                        text: item.message,
+                        date: item.date,
+                        key: item.key
+                    }));
+                });
+
+                _pubsubJs2.default.publish('todolist', _this4.todoList);
+            });
+        }
+    }]);
+
+    return TodoController;
+}();
+
+exports.default = TodoController;
+
+},{"../models/TodoItem":25,"../models/TodoList":26,"../services/TodoService":28,"jquery":14,"pubsub-js":16}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55160,7 +55478,7 @@ var TodoItem = function () {
 
 exports.default = TodoItem;
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55203,7 +55521,7 @@ var TodoList = function () {
 
 exports.default = TodoList;
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -55254,7 +55572,7 @@ var User = function () {
 
 exports.default = User;
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55339,8 +55657,8 @@ var TodoService = function () {
 
 exports.default = TodoService;
 
-},{"../models/TodoItem":23,"firebase":13}],27:[function(require,module,exports){
-"use strict";
+},{"../models/TodoItem":25,"firebase":13}],29:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -55348,31 +55666,39 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var HeaderUserView = function () {
     function HeaderUserView(selector) {
         _classCallCheck(this, HeaderUserView);
 
-        this._elem = document.querySelector(selector);
+        this._elem = (0, _jquery2.default)('#headerUser');
     }
 
     _createClass(HeaderUserView, [{
-        key: "update",
-        value: function update(model) {
+        key: 'update',
+        value: function update() {
+            var model = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-            this._elem.innerHTML = this.template(model);
+
+            this._elem.html(this.template(model));
         }
     }, {
-        key: "template",
+        key: 'template',
         value: function template(model) {
 
             if (model) {
 
-                return "\n                        <div class=\"header\">\n                            <div class=\"header__avatar\">\n                                <img src=\"" + model.imageUrl + "\" alt=\"" + model.name + "\">\n                            </div>\n                            <h3 class=\"header__title\">Ol\xE1, " + model.name + "!</h3>\n                            <button id=\"logoutGoogle\" class=\"btn btn--logout\">Sair</button>\n                        </div>\n                    ";
+                return '\n                        <div class="header">\n                            <div class="header__avatar">\n                                <img src="' + model.imageUrl + '" alt="' + model.name + '">\n                            </div>\n                            <h3 class="header__title">Ol\xE1, ' + model.name + '!</h3>\n                            <button id="logoutGoogle" class="btn btn--logout">Sair</button>\n                        </div>\n                    ';
             } else {
 
-                return "\n                        <div class=\"header\">\n                            <h3 class=\"header__title\">Ol\xE1! </h3>\n                            <p class=\"header__sub-title\">Entre com sua conta Google e comece suas anota\xE7\xF5es!</p>\n                            <button id=\"loginGoogle\" class=\"btn btn--google\">Google</button>\n                        </div>\n                    ";
+                return '\n                        <div class="header">\n                            <h3 class="header__title">Ol\xE1! </h3>\n                            <p class="header__sub-title">Entre com sua conta Google e comece suas anota\xE7\xF5es!</p>\n                            <button id="loginGoogle" class="btn btn--google">Google</button>\n                        </div>\n                    ';
             }
         }
     }]);
@@ -55382,7 +55708,7 @@ var HeaderUserView = function () {
 
 exports.default = HeaderUserView;
 
-},{}],28:[function(require,module,exports){
+},{"jquery":14}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55403,7 +55729,7 @@ var TodoView = function () {
     function TodoView(selector) {
         _classCallCheck(this, TodoView);
 
-        this._elem = (0, _jquery2.default)(selector);
+        this._elem = (0, _jquery2.default)('#todoList');
     }
 
     _createClass(TodoView, [{
@@ -55416,7 +55742,7 @@ var TodoView = function () {
         key: 'template',
         value: function template(model) {
 
-            return '\n                    <form class="todo-list__form">\n                        <input type="text" class="todo-list__form-input" />\n                        <button type="submit" class="todo-list__form-add">+</button>\n                    </form>\n                    <ul class="todo-list">\n                        ' + model.list.map(function (item) {
+            return !model ? '' : '\n                    <form class="todo-list__form">\n                        <input type="text" class="todo-list__form-input" placeholder="Crie uma nota..."/>\n                        <button type="submit" class="todo-list__form-add">+</button>\n                    </form>\n                    <ul class="todo-list">\n                        ' + model.list.map(function (item) {
                 return '\n                                            <li class="todo-list__item">\n                                                <p class="todo-list__item-text">' + item.text + '</p>\n                                                <button class="todo-list__item-remove" data-key="' + item.key + '">x</button>\n                                            </li>\n                                        ';
             }).join('') + '\n                        \n                    </ul>\n                ';
         }
@@ -55433,4 +55759,4 @@ var TodoView = function () {
 
 exports.default = TodoView;
 
-},{"jquery":14}]},{},[20]);
+},{"jquery":14}]},{},[21]);

@@ -160,6 +160,11 @@ body {
     color: #FFF;
     font-size: 14px;
 
+    &::placeholder {
+      color: rgba(255,255,255,0.85);
+      opacity: 1;
+    }
+
     &:focus {
       outline: none;
     }
