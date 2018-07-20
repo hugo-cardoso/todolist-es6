@@ -7,13 +7,11 @@ body {
   min-height: 100vh;
   display: flex;
   font-family: 'Roboto', sans-serif;
-  background: rgba(157,17,52,1);
-  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -moz-linear-gradient(top, rgba(157,17,52,1) 0%, rgba(53,18,181,1) 100%);
-  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -webkit-gradient(left top, left bottom, color-stop(0%, rgba(157,17,52,1)), color-stop(100%, rgba(53,18,181,1)));
-  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -webkit-linear-gradient(top, rgba(157,17,52,1) 0%, rgba(53,18,181,1) 100%);
-  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -o-linear-gradient(top, rgba(157,17,52,1) 0%, rgba(53,18,181,1) 100%);
-  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -ms-linear-gradient(top, rgba(157,17,52,1) 0%, rgba(53,18,181,1) 100%);
-  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), linear-gradient(to bottom, #9d1134 0%, #3512b5 100%);
+  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -moz-linear-gradient(to bottom, #f5af19 0%, #f12711 100%);
+  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -webkit-linear-gradient(to bottom, #f5af19 0%, #f12711 100%);
+  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -o-linear-gradient(to bottom, #f5af19 0%, #f12711 100%);
+  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), -ms-linear-gradient(to bottom, #f5af19 0%, #f12711 100%);
+  background: url('http://api.thumbr.it/whitenoise-361x370.png?background=3512b500&noise=e3e3e3&density=60&opacity=5'), linear-gradient(to bottom, #f5af19 0%, #f12711 100%);
   background-size: 250px;
 }
 
@@ -39,7 +37,7 @@ body {
   height: 50px;
   padding: 0px 15px;
   background-color: #FFF;
-  color: #424ba2;
+  color: #f26518;
   border: 0;
   border-radius: 5px;
   cursor: pointer;
@@ -50,17 +48,8 @@ body {
   }
 
   &--google {
-    color: #FFF;
     width: 150px;
     justify-content: center;
-    border-radius: 25px;
-    background: rgba(224,34,158,1);
-    background: -moz-linear-gradient(left, rgba(224,34,158,1) 0%, rgba(196,51,212,1) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(224,34,158,1)), color-stop(100%, rgba(196,51,212,1)));
-    background: -webkit-linear-gradient(left, rgba(224,34,158,1) 0%, rgba(196,51,212,1) 100%);
-    background: -o-linear-gradient(left, rgba(224,34,158,1) 0%, rgba(196,51,212,1) 100%);
-    background: -ms-linear-gradient(left, rgba(224,34,158,1) 0%, rgba(196,51,212,1) 100%);
-    background: linear-gradient(to right, rgba(224,34,158,1) 0%, rgba(196,51,212,1) 100%);
   }
 
   &--logout {
@@ -160,7 +149,7 @@ body {
     border: 0;
     background-color: #ffffff;
     border-radius: 0 10px 10px 0;
-    color: #424ba2;
+    color: #f02d17;
     font-size: 20px;
     cursor: pointer;
 
@@ -170,31 +159,43 @@ body {
   }
 }
 
-.card__wrapper {
+.card-wrapper {
   width: 100%;
-  background: rgba(255,255,255,0.15);
+  background: rgba(0, 0, 0, 0.22);
   border-radius: 10px;
   position: relative;
-  overflow: hidden;
 
-  &::after {
-    content: "";
+  &__nav-slide {
     position: absolute;
-    right: 0px;
-    top: 0;
-    height: 100%;
-    width: 75px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, #0000007a 100%);;
-  }
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 50px;
+    background-color: white;
+    border-radius: 0px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    color: #f12c13;
+    cursor: pointer;
 
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0px;
-    top: 0;
-    height: 100%;
-    width: 75px;
-    background: linear-gradient(to left, rgba(255, 255, 255, 0) 0%, #0000007a 100%);
+    &.slick-disabled { display: none !important; }
+
+    &--next {
+      right: -15px;
+
+      @media screen and (min-width: 768px) {
+        border-radius: 0px 5px 5px 0px;
+      } 
+    }
+
+    &--prev {
+      left: -15px;
+    
+      @media screen and (min-width: 768px) {
+        border-radius: 5px 0px 0px 5px;
+      } 
+    }
   }
 }
 
@@ -204,8 +205,8 @@ body {
 }
 
 .card {
-  width: 200px !important;
-  height: 250px;
+  width: 230px !important;
+  height: 300px;
   border-radius: 10px;
   padding: 10px;
   display: inline-flex !important;
@@ -213,23 +214,22 @@ body {
   box-sizing: border-box;
   margin: 25px 5px;
   background: rgba(94,7,94,1);
-  background: -moz-linear-gradient(-45deg, rgba(94,7,94,1) 0%, rgba(53,18,181,1) 100%);
-  background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(94,7,94,1)), color-stop(100%, rgba(53,18,181,1)));
-  background: -webkit-linear-gradient(-45deg, rgba(94,7,94,1) 0%, rgba(53,18,181,1) 100%);
-  background: -o-linear-gradient(-45deg, rgba(94,7,94,1) 0%, rgba(53,18,181,1) 100%);
-  background: -ms-linear-gradient(-45deg, rgba(94,7,94,1) 0%, rgba(53,18,181,1) 100%);
-  background: linear-gradient(135deg, rgba(94,7,94,1) 0%, rgba(53,18,181,1) 100%);
+  background: -moz-linear-gradient(135deg, #ffffff 0%, #cacaca 100%);
+  background: -webkit-linear-gradient(135deg, #ffffff 0%, #cacaca 100%);
+  background: -o-linear-gradient(135deg, #ffffff 0%, #cacaca 100%);
+  background: -ms-linear-gradient(135deg, #ffffff 0%, #cacaca 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #cacaca 100%);
   box-shadow: 0px 4px 5px 2px rgba(0,0,0,.25);
-  opacity: .45;
+  opacity: .35;
   transition: all .2s linear;
   
   &__text {
     width: 100%;
-    background: rgba(27,8,83, .6);
+    background: rgba(195, 195, 195, 0.6);
     border-radius: 5px;
     padding: 10px;
     box-sizing: border-box;
-    color: #FFF;
+    color: #000;
     font-size: 15px;
     line-height: 22px;
     font-family: 'Roboto', sans-serif;
@@ -246,7 +246,7 @@ body {
   }
   
   &__date {
-    color: rgba(255,255,255,.65);
+    color: #000;
     font-size: 12px;
     font-family: 'Roboto', sans-serif;
     font-weight: 300;
@@ -257,7 +257,7 @@ body {
     height: 25px;
     border-radius: 5px;
     border: 0;
-    background: #9d1133;
+    background: #f02d17;
     color: #FFF;
 
     &:focus { outline: none; }

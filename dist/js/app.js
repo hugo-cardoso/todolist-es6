@@ -58787,8 +58787,10 @@ var TodoView = function () {
             variableWidth: true,
             infinite: false,
             dots: false,
-            arrows: false,
-            speed: 100
+            speed: 100,
+            focusOnSelect: true,
+            prevArrow: '.card-wrapper__nav-slide--prev',
+            nextArrow: '.card-wrapper__nav-slide--next'
         };
     }
 
@@ -58797,15 +58799,18 @@ var TodoView = function () {
         value: function update(model) {
 
             this._elem.html(this.template(model));
-            this._elem.find('.card__wrapper').slick(this.carouselOptions);
+
+            var slickContainer = this._elem.find('.card-wrapper .card-slides');
+
+            slickContainer.slick(this.carouselOptions);
         }
     }, {
         key: 'template',
         value: function template(model) {
 
-            return !model ? '' : '\n                    <form class="todo-list__form">\n                        <input type="text" class="todo-list__form-input" placeholder="Crie uma nota..."/>\n                        <button type="submit" class="todo-list__form-add">+</button>\n                    </form>\n                    <div class="card__wrapper">\n                        ' + model.list.map(function (item) {
-                return '\n                                        <div class="card">\n                                            <div class="card__text">\n                                                ' + item.text + '\n                                            </div>\n                                            <div class="card__bottom">\n                                                <span class="card__date">\n                                                    ' + _DateHelper2.default.dateForText(item.date) + '\n                                                </span>\n                                                <button class="card__remove" data-key="' + item.key + '">\n                                                    <i class="mdi mdi-delete"></i>\n                                                </button>\n                                            </div>\n                                        </div>\n                                        ';
-            }).join('') + '\n                        \n                    </div>\n                ';
+            return !model ? '' : '\n                    <form class="todo-list__form">\n                        <input type="text" class="todo-list__form-input" placeholder="Crie uma nota..."/>\n                        <button type="submit" class="todo-list__form-add">+</button>\n                    </form>\n                    <div class="card-wrapper">\n                        <div class="card-wrapper__nav-slide card-wrapper__nav-slide--prev">\n                            <i class="mdi mdi-chevron-left"></i>\n                        </div>\n                        <div class="card-wrapper__nav-slide card-wrapper__nav-slide--next">\n                            <i class="mdi mdi-chevron-right"></i>\n                        </div>\n                        <div class="card-slides">\n                            ' + model.list.map(function (item) {
+                return '\n                                            <div class="card">\n                                                <div class="card__text">\n                                                    ' + item.text + '\n                                                </div>\n                                                <div class="card__bottom">\n                                                    <span class="card__date">\n                                                        ' + _DateHelper2.default.dateForText(item.date) + '\n                                                    </span>\n                                                    <button class="card__remove" data-key="' + item.key + '">\n                                                        <i class="mdi mdi-delete"></i>\n                                                    </button>\n                                                </div>\n                                            </div>\n                                            ';
+            }).join('') + '\n                        </div>\n                    </div>\n                ';
         }
     }, {
         key: 'clear',
