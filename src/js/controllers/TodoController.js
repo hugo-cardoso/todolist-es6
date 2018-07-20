@@ -27,9 +27,9 @@ class TodoController {
             }
         });
 
-        $('body').on('click','.todo-list__item-remove', e => {
+        $('body').on('click','.card__remove', e => {
       
-            const key = $(e.target).attr('data-key');
+            const key = $(e.currentTarget).attr('data-key');
       
             this.removeItem( key );
           });

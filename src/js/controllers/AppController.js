@@ -1,10 +1,9 @@
-import * as firebase from "firebase"
+import firebase from "firebase";
+
 import $ from 'jquery';
 import PubSub from 'pubsub-js';
 
 import APP_SETTINGS from '../APP_SETTINGS.js';
-
-import TodoService from '../services/TodoService';
 
 import TodoController from './TodoController';
 import AuthController from './AuthController';
@@ -19,8 +18,6 @@ class AppController {
     firebase.initializeApp(APP_SETTINGS.firebase_configs);
 
     this.user = null;
-
-    this.todoService = new TodoService();
     
     this.authController = new AuthController();
     this.todoController = new TodoController();
