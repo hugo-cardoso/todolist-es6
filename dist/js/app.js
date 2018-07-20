@@ -58787,7 +58787,8 @@ var TodoView = function () {
             variableWidth: true,
             infinite: false,
             dots: false,
-            arrows: false
+            arrows: false,
+            speed: 100
         };
     }
 
